@@ -52,4 +52,8 @@
 
   [Email: eraymond@mail.com](mailto:eraymond@mail.com)
 
+  ## Screenshots
 
+  ![alt text](./Develop/assets/images/readme-with-license.JPG)
+
+  ![alt text](./Develop/assets/images/readme-without-license.JPG)
