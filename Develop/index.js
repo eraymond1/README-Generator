@@ -5,12 +5,11 @@ const generateMarkdown = require('./utils/generateMarkdown');
 
 const fs = require('fs');
 
-const util = require('util');
 
-const writeFileAsync = util.promisify('fs.writeFile');
+
+
 // TODO: Create an array of questions for user input
-const questions = () => 
-    inquirer.prompt([
+const questions = [
 
         {
             type: "input",
@@ -46,7 +45,7 @@ const questions = () =>
             type: "list",
             name: "license",
             message: "What license does your project have?",
-            choices: ["APACHE 2.0", "GPL 3.0", "BSD 3", "MIT", "None" ]
+            choices: ["agpl", "apache", "mit", "no license" ]
         },
 
         {
@@ -72,18 +71,45 @@ const questions = () =>
             name: "contribute",
             message: "What does the user need to know about contributing to this repo?"
         },
-]);
+];
 
 // TODO: Create a function to write README file
-function writeToFile(fileName, data) {}
+const writeFile = fileContent => {
+    return new Promise((resolve, reject) => {
+        fs.writeFile('./dist/generated-README.md', fileContent, err => {
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            resolve({
+                ok: true,
+                message: 'File created!'
+            });
+        });
+    });
+};
 
 // TODO: Create a function to initialize app
 const init = () => {
-    questions()
-    .then((answers) => writeFileAsync('README.md', generateMarkdown(answers)))
-    .then(() => console.log('Created README.md'))
-    .catch((err) => console.error(err));
+    return inquirer.prompt(questions)
+    .then(readmeData => {
+        return readmeData;
+    })
 };
 
 // Function call to initialize app
-init();
+init()
+.then(readmeData => {
+    console.log(readmeData);
+    return generateMarkdown(readmeData);
+})
+.then(pageMD => {
+    return writeFile(pageMD);
+})
+.then(writeFileResponse => {
+    console.log(writeFileResponse.message);
+})
+.catch(err => {
+    console.log(err);
+})
